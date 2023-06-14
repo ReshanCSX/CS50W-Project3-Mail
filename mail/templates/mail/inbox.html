@@ -2,13 +2,21 @@
 {% load static %}
 
 {% block body %}
-    <h2>{{ request.user.email }}</h2>
+    <h3 class="fw-light text-muted">{{ request.user.email }}</h3>
 
-    <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
-    <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
-    <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
-    <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
-    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+    <nav class="navbar navbar-light">
+        <div class="container-fluid px-0">
+            <div>
+                <button class="btn btn-sm btn-outline-primary me-1" id="inbox">Inbox</button>
+                <button class="btn btn-sm btn-outline-primary me-1" id="compose">Compose</button>
+                <button class="btn btn-sm btn-outline-primary me-1" id="sent">Sent</button>
+                <button class="btn btn-sm btn-outline-primary me-1" id="archived">Archived</button>
+            </div>
+            <div>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+            </div>
+        </div>
+    </nav>
     <hr>
 
     <div id="message" class="alert" role="alert" style="display:none;">
@@ -32,7 +40,6 @@
             <textarea class="form-control mb-3" id="compose-body" placeholder="Body" rows="10"></textarea>
             <input type="submit" class="btn btn-primary"/>
         </form>
-
     </div>
 {% endblock %}
 
