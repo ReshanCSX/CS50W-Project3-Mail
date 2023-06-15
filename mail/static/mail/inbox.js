@@ -32,6 +32,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-content-view').style.display = 'none';
   document.querySelector('#message').style.display = 'none';
 
   // Show the mailbox name
@@ -76,15 +77,13 @@ function load_mailbox(mailbox) {
 
               count++
               
-              // If eamil read
+              // If email read
               if(email.read){
                 emails.classList.add('bg-light')
               }
               
               // Adding event lister to each div click
-              emails.addEventListener('click', function (){
-                console.log(email.id)
-              });
+              emails.addEventListener('click', () => view_email(email.id));
 
               // Appending div to the container
               document.querySelector('#emails-view').append(emails);
@@ -96,6 +95,57 @@ function load_mailbox(mailbox) {
         .catch(error =>{
           console.log(error);
         });
+}
+
+
+async function view_email(email_id){
+  
+  try{
+    const request = await fetch(`/emails/${email_id}`);
+    const response = await request.json();
+
+
+    const email_body = document.querySelector('#email-content-view');
+
+    // Clearing the view
+    email_body.style.display = 'block';
+    document.querySelector('#message').style.display = 'none';
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none';
+    
+    // Appending email data to view
+    email_body.innerHTML = `
+        <div class="row mb-2">
+          <h3 class="px-0">${response.subject}</h3>
+        </div>
+        <div class="row d-flex justify-content-between mb-4 pb-3 border-bottom">
+            <div class="col-12 col-md-8 px-0"><span class="text-muted">From:</span> ${response.sender}</div>
+            <div class="col-12 col-md-4 px-0 text-muted fst-italic text-end small">${response.timestamp}</div>
+        </div>
+        <div class="row mb-3 text-muted" style="white-space: pre-line;">${response.body}</div>`;
+
+    // Sending a PUT request if the email is not already read
+    if (!response.read){
+
+      try{
+        await fetch(`emails/${email_id}`,{
+          method: 'PUT',
+          body: JSON.stringify({
+            read: true
+          })
+        });
+      }
+      catch(error){
+        console.log(error);
+      }
+
+    }
+    
+  }
+  catch(error){
+    console.log(error);
+  }
+
 }
 
 
