@@ -6,12 +6,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
-  document.querySelector('#compose-form').addEventListener('submit', submit_email);
+  document.querySelector('#compose-form').addEventListener('submit', compose_submit);
   
 
   // By default, load the inbox
   load_mailbox('inbox');
 });
+
 
 function compose_email() {
 
@@ -25,6 +26,7 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
+
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
@@ -34,13 +36,68 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  fetch(`/emails/${mailbox}`)
+    .then(response => response.json())
+      .then(result => 
+        {
+          email_count = result.length
+
+          // If no emails
+          if (email_count == 0){
+            document.querySelector('#emails-view').innerHTML = '<div class="col-12 text-bold text-center"> No Emails </div>';
+          }
+
+          else{
+            
+            // Counting element numbers
+            count = 0
+
+            // Looping through each element in results
+            result.forEach(email => {
+
+              const emails = document.createElement('div');
+
+              // Appending emails inside the div.
+
+              emails.innerHTML = `
+                <div class="col-12 col-md-4"> ${email.sender}</div>
+                <div class="col-12 col-md-4"> ${email.sender}</div>
+                <div class="col-12 col-md-4"> ${email.sender}</div>
+              `;
+
+              // Adding styles to created div
+              if(count == (email_count - 1)){
+                emails.classList.add('row', 'border','py-3', 'pointer')
+              }
+              else{
+                emails.classList.add('row', 'border', 'border-bottom-0', 'py-3', 'pointer')
+              }
+
+              count++
+              
+              // Adding event lister to each div click
+              emails.addEventListener('click', function (){
+                console.log(email.id)
+              });
+
+              // Appending div to the container
+              document.querySelector('#emails-view').append(emails);
+            });
+
+          }
+
+        })
+        .catch(error =>{
+          console.log(error);
+        });
 }
 
 
-function submit_email(event) {
+function compose_submit(event) {
   event.preventDefault();
 
-
+  // Fetch post request to send email
   fetch('/emails',{
     method: 'POST',
     body: JSON.stringify({
