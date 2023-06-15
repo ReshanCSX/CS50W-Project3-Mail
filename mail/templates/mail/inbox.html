@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block body %}
+    <div id="message" class="alert" role="alert" style="display:none;">
+    </div>
+
     <h3 class="fw-light text-muted">{{ request.user.email }}</h3>
 
     <nav class="navbar navbar-light">
@@ -18,9 +21,6 @@
         </div>
     </nav>
     <hr>
-
-    <div id="message" class="alert" role="alert" style="display:none;">
-    </div>
 
     <div id="email-content-view" class="container">
     </div>

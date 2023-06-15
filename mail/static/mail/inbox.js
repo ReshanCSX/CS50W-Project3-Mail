@@ -115,6 +115,9 @@ async function view_email(email_id){
     
     // Appending email data to view
     email_body.innerHTML = `
+        <div class="row mb-3">
+          <div id="email-menu" class="px-0"></div>
+        </div>
         <div class="row mb-2">
           <h3 class="px-0">${response.subject}</h3>
         </div>
@@ -140,10 +143,50 @@ async function view_email(email_id){
       }
 
     }
+
+    // Archive button
+    const archive = document.createElement('button');
+
+    archive.classList.add('btn', 'btn-outline-dark');
+    archive.innerHTML = '<i class="bi bi-archive"></i>';
+
+    archive.addEventListener('click', async () => archive_email(email_id, response.archived));
+
+    document.querySelector('#email-menu').append(archive);
+
     
   }
   catch(error){
     console.log(error);
+  }
+
+}
+
+async function archive_email(email_id, status) {
+
+  try{
+
+    // PUT archived status
+    const test = await fetch(`/emails/${email_id}`,{
+      method: 'PUT',
+      body: JSON.stringify({
+        archived: !status
+      })
+    });
+
+    // User feedback
+    if(!status) {
+      load_mailbox('archive')
+      message('Email archived successfully.', 'warning')
+    }
+    else{
+      load_mailbox('inbox')
+      message('Email unarchived successfully.', 'success')
+    }
+  }
+
+  catch(error){
+    console.log(error)
   }
 
 }
@@ -164,21 +207,25 @@ function compose_submit(event) {
   .then(response => response.json())
   .then(result => {
     if (result.error){
-      const message = document.querySelector('#message')
-      message.innerHTML = result.error;
-      message.style.display = 'block';
-      message.classList.add("alert-danger");
-      window.scrollTo(0,0);
+      message(result.error, 'danger')
     }
     else{
       load_mailbox('sent')
-      message.innerHTML = result.message;
-      message.style.display = 'block';
-      message.classList.add("alert-success");
+      message(result.message, 'success')
     }
   })
   .catch(error =>{
     console.log(error);
   });
 
+}
+
+
+function message(feedback, status){
+
+  const message = document.querySelector('#message')
+  message.innerHTML = feedback;
+  message.style.display = 'block';
+  message.classList.add(`alert-${status}`);
+  window.scrollTo(0,0);
 }
