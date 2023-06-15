@@ -61,9 +61,9 @@ function load_mailbox(mailbox) {
               // Appending emails inside the div.
 
               emails.innerHTML = `
-                <div class="col-12 col-md-4"> ${email.sender}</div>
-                <div class="col-12 col-md-4"> ${email.sender}</div>
-                <div class="col-12 col-md-4"> ${email.sender}</div>
+                <div class="col-12 col-md-4 text-truncate"> ${email.sender}</div>
+                <div class="col-12 col-md-5 text-truncate"> ${email.subject}</div>
+                <div class="col-12 col-md-3 small fst-italic text-muted"> ${email.timestamp}</div>
               `;
 
               // Adding styles to created div
