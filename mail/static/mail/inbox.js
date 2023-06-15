@@ -76,6 +76,11 @@ function load_mailbox(mailbox) {
 
               count++
               
+              // If eamil read
+              if(email.read){
+                emails.classList.add('bg-light')
+              }
+              
               // Adding event lister to each div click
               emails.addEventListener('click', function (){
                 console.log(email.id)
