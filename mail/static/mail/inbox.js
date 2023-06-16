@@ -118,14 +118,21 @@ async function view_email(email_id){
         <div class="row mb-3">
           <div id="email-menu" class="px-0"></div>
         </div>
-        <div class="row mb-2">
-          <h3 class="px-0">${response.subject}</h3>
+
+        <div class="row mb-2 px-0">
+          <div class="col-12 col-md-8 ps-0">
+            <h3 class="p-0 text-wrap">${response.subject}</h3>
+          </div>
+          <div class="col-12 col-md-4 px-0 text-muted fst-italic small d-flex align-items-center float-right">${response.timestamp}</div>
         </div>
-        <div class="row d-flex justify-content-between mb-4 pb-3 border-bottom">
-            <div class="col-12 col-md-8 px-0"><span class="text-muted">From:</span> ${response.sender}</div>
-            <div class="col-12 col-md-4 px-0 text-muted fst-italic text-end small">${response.timestamp}</div>
+
+        <div class="row">
+            <div class="col-12 px-0"><span class="text-muted">From:</span> ${response.sender}</div>
         </div>
-        <div class="row mb-3 text-muted" style="white-space: pre-line;">${response.body}</div>`;
+        <div class="row">
+          <div class="col-12 pb-3 border-bottom mb-4 px-0"><span class="text-muted">To:</span>${response.recipients}</div>
+        </div>
+        <div class="row mb-3 text-muted px-0" style="white-space: pre-line;">${response.body}</div>`;
 
     // Sending a PUT request if the email is not already read
     if (!response.read){
@@ -148,12 +155,14 @@ async function view_email(email_id){
     const archive = document.createElement('button');
 
     archive.classList.add('btn', 'btn-outline-dark');
-    archive.innerHTML = '<i class="bi bi-archive"></i>';
+    archive.innerHTML = '<i class="bi bi-archive"></i> Archive';
 
     archive.addEventListener('click', async () => archive_email(email_id, response.archived));
 
     document.querySelector('#email-menu').append(archive);
-
+    
+    
+    // Reply Button
     
   }
   catch(error){
@@ -161,6 +170,7 @@ async function view_email(email_id){
   }
 
 }
+
 
 async function archive_email(email_id, status) {
 
