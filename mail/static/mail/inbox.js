@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click', () => compose_email('new'));
 
-  document.querySelector('#compose-form').addEventListener('submit', compose_submit);
+
   
 
   // By default, load the inbox
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function compose_email() {
+function compose_email(type, email) {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -22,10 +22,22 @@ function compose_email() {
   document.querySelector('#email-content-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+
+  if (type === 'reply'){
+
+    document.querySelector('#compose-recipients').value = `${email.sender}`;
+    document.querySelector('#compose-subject').value = (email.subject.slice(0,3) === 'Re:') ? `${email.subject}` : `Re: ${email.subject}`;
+    document.querySelector('#compose-body').value = `\n\n\n\n${email.timestamp}, ${email.sender} wrote: \n\n ${email.body}`;
+
+  }
+  else{
+    // Clear out composition fields
+    document.querySelector('#compose-recipients').value = '';
+    document.querySelector('#compose-subject').value = '';
+    document.querySelector('#compose-body').value = '';
+  }
+
+  document.querySelector('#compose-form').addEventListener('submit', compose_submit);
 }
 
 
@@ -122,17 +134,17 @@ async function view_email(email_id){
         </div>
 
         <div class="row mb-2 px-0">
-          <div class="col-12 col-md-8 ps-0">
+          <div class="col-12 col-md-10 ps-0">
             <h3 class="p-0 text-wrap">${response.subject}</h3>
           </div>
-          <div class="col-12 col-md-4 px-0 text-muted fst-italic small d-flex align-items-center float-right">${response.timestamp}</div>
+          <div class="col-12 col-md-2 px-0 text-muted fst-italic small d-flex align-items-center float-right">${response.timestamp}</div>
         </div>
 
         <div class="row">
             <div class="col-12 px-0"><span class="text-muted">From:</span> ${response.sender}</div>
         </div>
         <div class="row">
-          <div class="col-12 pb-3 border-bottom mb-4 px-0"><span class="text-muted">To:</span>${response.recipients}</div>
+          <div class="col-12 pb-3 border-bottom mb-4 px-0"><span class="text-muted">To:</span> ${response.recipients}</div>
         </div>
         <div class="row mb-3 text-muted px-0" style="white-space: pre-line;">${response.body}</div>`;
 
@@ -153,18 +165,28 @@ async function view_email(email_id){
 
     }
 
+    const email_menu = document.querySelector('#email-menu')
+
     // Archive button
     const archive = document.createElement('button');
 
-    archive.classList.add('btn', 'btn-outline-dark');
-    archive.innerHTML = '<i class="bi bi-archive"></i> Archive';
+    archive.classList.add('btn', 'btn-sm', 'btn-outline-dark');
+    archive.innerHTML = (response.archived) ? '<i class="bi bi-archive"></i> Unarchive': '<i class="bi bi-archive"></i> Archive';
 
-    archive.addEventListener('click', async () => archive_email(email_id, response.archived));
+    archive.addEventListener('click', () => archive_email(email_id, response.archived));
 
-    document.querySelector('#email-menu').append(archive);
+    email_menu.append(archive);
     
     
     // Reply Button
+    const reply = document.createElement('button');
+
+    reply.classList.add('btn', 'btn-sm', 'btn-outline-dark', 'ms-2');
+    reply.innerHTML = '<i class="bi bi-arrow-return-right"></i> Reply';
+
+    reply.addEventListener('click', () => compose_email('reply', response));
+
+    email_menu.append(reply);
     
   }
   catch(error){
