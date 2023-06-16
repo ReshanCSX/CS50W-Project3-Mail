@@ -226,32 +226,37 @@ async function archive_email(email_id, status) {
 }
 
 
-function compose_submit(event) {
+async function compose_submit(event) {
+
+  // Prevent submiting the form
   event.preventDefault();
 
   // Fetch post request to send email
-  fetch('/emails',{
-    method: 'POST',
-    body: JSON.stringify({
-      recipients: document.querySelector('#compose-recipients').value,
-      subject: document.querySelector('#compose-subject').value,
-      body: document.querySelector('#compose-body').value
-    })
-  })
-  .then(response => response.json())
-  .then(result => {
-    if (result.error){
-      message(result.error, 'danger')
+
+  try{
+    const request = await fetch('/emails',{
+      method : 'POST',
+      body : JSON.stringify({
+        recipients: document.querySelector('#compose-recipients').value,
+        subject: document.querySelector('#compose-subject').value,
+        body: document.querySelector('#compose-body').value
+      })
+    });
+
+    const response = request.json();
+
+    if (response.error){
+      message(result.error, 'danger');
     }
     else{
       load_mailbox('sent')
-      message(result.message, 'success')
+      message(result.message, 'success');
     }
-  })
-  .catch(error =>{
+  }
+  catch(error){
     console.log(error);
-  });
-
+  }
+  
 }
 
 
