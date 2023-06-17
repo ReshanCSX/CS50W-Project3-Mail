@@ -2,26 +2,34 @@
 
 {% block body %}
 
-    <h2>Register</h2>
-
     {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
+        <div class="row justify-content-center mt-3">{{ message }}</div>
+    {% endif %} 
 
-    <form action="{% url 'register' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <input class="form-control" type="email" name="email" placeholder="Email Address">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
-        </div>
-        <input class="btn btn-primary" type="submit" value="Register">
-    </form>
 
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+    <div class="row justify-content-center text-center mt-5">
+        <div class="col-12 col-md-8 col-lg-6">
+
+
+            <h2 class="mb-4">Register</h2>
+
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <input class="form-control" type="email" name="email" placeholder="Email Address">
+                </div>
+                <div class="form-group mb-3">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+                <div class="form-group mb-3">
+                    <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+                </div>
+                <input class="btn btn-primary mb-4" type="submit" value="Register">
+            </form>
+
+            <div class="text-muted small">Already have an account? <a href="{% url 'login' %}">Log In here.</a></div>
+
+        </div>
+    </div>
 
 {% endblock %}
