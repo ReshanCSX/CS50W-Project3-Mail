@@ -201,7 +201,7 @@ async function archive_email(email_id, status) {
   try{
 
     // PUT archived status
-    const test = await fetch(`/emails/${email_id}`,{
+    const request = await fetch(`/emails/${email_id}`,{
       method: 'PUT',
       body: JSON.stringify({
         archived: !status
@@ -243,14 +243,14 @@ async function compose_submit(event) {
       })
     });
 
-    const response = request.json();
+    const response = await request.json();
 
     if (response.error){
-      message(result.error, 'danger');
+      message(response.error, 'danger');
     }
     else{
       load_mailbox('sent')
-      message(result.message, 'success');
+      message(response.error, 'success');
     }
   }
   catch(error){
