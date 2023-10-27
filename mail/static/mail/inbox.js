@@ -76,7 +76,7 @@ function load_mailbox(mailbox) {
               // Appending emails inside the div.
 
               emails.innerHTML = `
-                <div class="col-12 col-md-4 text-truncate"> ${email.sender}</div>
+                <div class="col-12 col-md-4 text-truncate"> ${mailbox === "sent" ? email.recipients : email.sender}</div>
                 <div class="col-12 col-md-5 text-truncate"> ${email.subject}</div>
                 <div class="col-12 col-md-3 small fst-italic text-muted"> ${email.timestamp}</div>
               `;
@@ -245,12 +245,14 @@ async function compose_submit(event) {
 
     const response = await request.json();
 
+    console.log(response)
+
     if (response.error){
       message(response.error, 'danger');
     }
     else{
       load_mailbox('sent')
-      message(response.error, 'success');
+      message(response.message, 'success');
     }
   }
   catch(error){

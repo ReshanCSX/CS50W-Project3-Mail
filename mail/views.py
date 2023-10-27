@@ -31,8 +31,9 @@ def compose(request):
 
     # Check recipient emails
     data = json.loads(request.body)
-    emails = [email.strip() for email in data.get("recipients").split(",")]
-    if emails == [""]:
+    emails = [email.strip() for email in data.get("recipients").split(",") if email.strip() != ""]
+
+    if not emails:
         return JsonResponse({
             "error": "At least one recipient required."
         }, status=400)
@@ -56,20 +57,22 @@ def compose(request):
     users = set()
     users.add(request.user)
     users.update(recipients)
+
     for user in users:
-        email = Email(
+        email = Email.objects.create(
             user=user,
             sender=request.user,
             subject=subject,
             body=body,
             read=user == request.user
         )
-        email.save()
+
         for recipient in recipients:
             email.recipients.add(recipient)
-        email.save()
 
-    return JsonResponse({"message": "Email sent successfully."}, status=201)
+    return JsonResponse({
+                "message": "Email sent successfully."
+            }, status=201)
 
 
 @login_required
