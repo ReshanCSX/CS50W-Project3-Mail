@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+  const CURRENT_PAGE = ""
+
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
@@ -42,6 +44,8 @@ function compose_email(type, email) {
 
 
 function load_mailbox(mailbox) {
+
+  CURRENT_PAGE = mailbox
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
@@ -168,15 +172,17 @@ async function view_email(email_id){
     const email_menu = document.querySelector('#email-menu')
 
     // Archive button
-    const archive = document.createElement('button');
+    if(CURRENT_PAGE != "sent"){
 
-    archive.classList.add('btn', 'btn-sm', 'btn-outline-dark');
-    archive.innerHTML = (response.archived) ? '<i class="bi bi-archive"></i> Unarchive': '<i class="bi bi-archive"></i> Archive';
+      const archive = document.createElement('button');
 
-    archive.addEventListener('click', () => archive_email(email_id, response.archived));
+      archive.classList.add('btn', 'btn-sm', 'btn-outline-dark');
+      archive.innerHTML = (response.archived) ? '<i class="bi bi-archive"></i> Unarchive': '<i class="bi bi-archive"></i> Archive';
 
-    email_menu.append(archive);
-    
+      archive.addEventListener('click', () => archive_email(email_id, response.archived));
+
+      email_menu.append(archive);
+    }    
     
     // Reply Button
     const reply = document.createElement('button');
@@ -210,13 +216,13 @@ async function archive_email(email_id, status) {
 
     // User feedback
     if(!status) {
-      load_mailbox('archive')
       message('Email archived successfully.', 'warning')
     }
     else{
-      load_mailbox('inbox')
       message('Email unarchived successfully.', 'success')
     }
+
+    load_mailbox('inbox')
   }
 
   catch(error){
