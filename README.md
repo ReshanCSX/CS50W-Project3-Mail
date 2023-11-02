@@ -1,4 +1,4 @@
-# CS50W - Project 3- Mail
+# CS50W - Project 3 - Mail
 
 Introducing Project 3 of [CS50’s Web Programming with Python and JavaScript](https://cs50.harvard.edu/web/2020/), [Mail](https://cs50.harvard.edu/web/2020/projects/3/mail/). In this project, I have developed a single page application which is a front-end for an email client that uses API calls to send and receive emails.
 
